@@ -11,6 +11,10 @@
   --color-praimary: #e6ccff;
 }
 
-::-webkit-scrollbar{
-    display: none;
+::-webkit-scrollbar {
+  display: none;
+}
+
+.reset-tw :not(pre):not(code) {
+  all: revert;
 }

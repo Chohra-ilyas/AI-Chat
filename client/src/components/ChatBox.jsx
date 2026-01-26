@@ -41,10 +41,20 @@ const ChatBox = () => {
         {messages.map((message, index) => (
           <Message key={index} message={message} />
         ))}
+
+        {loading && (
+          <div className="loader flex items-center gap-1.5 mt-4">
+            <div className="w-1.5 h-1.5 bg-praimary rounded-full animate-bounce delay-0 dark:bg-white"></div>
+            <div className="w-1.5 h-1.5 bg-praimary rounded-full animate-bounce delay-200 dark:bg-white"></div>
+            <div className="w-1.5 h-1.5 bg-praimary rounded-full animate-bounce delay-400 dark:bg-white"></div>
+          </div>
+        )}
       </div>
 
       {/*Prompt Input Box */}
-      <form></form>
+      <form>
+        <section className=""></section>
+      </form>
     </div>
   );
 };
