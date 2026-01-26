@@ -2,12 +2,17 @@ import ChatBox from "./components/ChatBox";
 import SideBar from "./components/SideBar";
 import Community from "./pages/Community";
 import Credits from "./pages/Credits";
-import { Route, Routes } from "react-router-dom";
-import { useState } from "react";
+import { Route, Routes, useLocation } from "react-router-dom";
+import { use, useState } from "react";
 import { assets } from "./assets/assets";
 import './assets/prism.css';
+import Loading from "./pages/Loading";
 const App = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const {pathname} = useLocation();
+
+  if (pathname === "/loading") return <Loading />;
+
   return (
     <>
     {!isMenuOpen &&  <img src={assets.menu_icon} alt="Close Menu"
