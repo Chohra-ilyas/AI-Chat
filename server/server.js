@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import connectDB from './config/db.js';
 import 'dotenv/config';
+import userRouter from './routes/userRoutes.js';
 
 const app = express();
 
@@ -13,9 +14,7 @@ app.use(express.json());
 await connectDB(process.env.MONGODB_URI);
 
 // Routes
-app.get('/', (req, res) => {
-    res.send('Hello from the server!');
-});
+app.use('/api/users', userRouter);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
