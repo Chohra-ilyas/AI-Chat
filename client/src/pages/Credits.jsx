@@ -46,8 +46,7 @@ const Credits = () => {
                   <li key={index} className="flex items-center">
                     <span
                       className="inline-block w-6 h-6 mr-3
-                    bg-green-500 text-white rounded-full text-center
-                    flex items-center justify-center"
+                    bg-green-500 text-white rounded-full text-center items-center justify-center"
                     >
                       ✓
                     </span>
