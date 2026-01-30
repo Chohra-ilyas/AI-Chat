@@ -3,6 +3,7 @@ import cors from 'cors';
 import connectDB from './config/db.js';
 import 'dotenv/config';
 import userRouter from './routes/userRoutes.js';
+import chatRouter from './routes/chatRoutes.js';
 
 const app = express();
 
@@ -15,6 +16,7 @@ await connectDB(process.env.MONGODB_URI);
 
 // Routes
 app.use('/api/users', userRouter);
+app.use('/api/chats', chatRouter);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
