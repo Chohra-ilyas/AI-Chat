@@ -19,7 +19,7 @@ export const registerUser = async (req, res) => {
       .status(201)
       .json({ message: "User registered successfully", token, success: true });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json({ message: "Server error", success: false });
   }
 };
@@ -55,6 +55,25 @@ export const getUserData = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Server error", success: false });
   }
+};
+
+export const getPublishedImages = async (req, res) => {
+  try {
+    const publishedImagemessages = await Chat.aggregate([
+      { $unwind: "$messages" },
+      { $match: { "messages.isPublished": true, "messages.isImage": true } },
+      {
+        $project: {
+          _id: 0,
+          imageUrl: "$messages.content",
+          userName: "$userName",
+        },
+      },
+    ]);
+    res
+      .status(200)
+      .json({ images: publishedImagemessages.reverse(), success: true });
+  } catch (error) {}
 };
 
 // JWT Generate
