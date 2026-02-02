@@ -1,4 +1,4 @@
-import Transaction from "../models/Transaction";
+import Transaction from "../models/Transaction.js";
 import Stripe from "stripe";
 
 const plans = [
@@ -86,7 +86,7 @@ export const purchasePlan = async (req, res) => {
             },
             unit_amount: plan.price * 100,
           },
-          quantity: 2,
+          quantity: 1,
         },
       ],
       mode: "payment",
@@ -97,7 +97,7 @@ export const purchasePlan = async (req, res) => {
     });
 
     res.status(200).json({ url: session.url, success: true });
-  } catch {
+  } catch (error) {
     res.status(500).json({ message: error.message, success: false });
   }
 };
