@@ -17,7 +17,7 @@ app.use(express.json());
 // Database connection
 await connectDB(process.env.MONGODB_URI);
 
-// Routes
+// Routes   
 app.use("/api/users", userRouter);
 app.use("/api/chats", chatRouter);
 app.use("/api/messages", messageRoute);
