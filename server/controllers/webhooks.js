@@ -32,6 +32,7 @@ export const handleStripeWebhook = async (req, res) => {
             _id: transactionId,
             isPaid: false,
           });
+          console.log(transaction)
           if (transaction) {
             transaction.isPaid = true;
             await User.findByIdAndUpdate(transaction.userId, {
