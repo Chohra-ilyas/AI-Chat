@@ -80,7 +80,7 @@ export const purchasePlan = async (req, res) => {
       line_items: [
         {
           price_data: {
-            currency: "usd",
+            currency: "EUR",
             product_data: {
               name: plan.name,
             },
