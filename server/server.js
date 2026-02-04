@@ -6,6 +6,7 @@ import userRouter from "./routes/userRoutes.js";
 import chatRouter from "./routes/chatRoutes.js";
 import messageRoute from "./routes/messageRoutes.js";
 import creditRouter from "./routes/creditRoutes.js";
+import { handleStripeWebhook } from "./controllers/webhooks.js";
 
 // Initialize Express app
 const app = express();
@@ -16,6 +17,11 @@ app.use(express.json());
 
 // Database connection
 await connectDB(process.env.MONGODB_URI);
+
+// Stripe webhook endpoint
+app.post("api/stripe", express.raw({ type: "application/json" }), async (req, res) => {
+  await handleStripeWebhook(req, res);
+})
 
 // Routes   
 app.use("/api/users", userRouter);
