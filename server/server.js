@@ -18,9 +18,7 @@ await connectDB(process.env.MONGODB_URI);
 app.post(
   "/api/stripe",
   express.raw({ type: "application/json" }),
-  async (req, res) => {
-    await handleStripeWebhook(req, res);
-  },
+  handleStripeWebhook,
 );
 
 // Middleware
