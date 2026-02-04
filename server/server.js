@@ -15,15 +15,23 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  res.send("API is running...");
+});
+
 // Database connection
 await connectDB(process.env.MONGODB_URI);
 
 // Stripe webhook endpoint
-app.post("api/stripe", express.raw({ type: "application/json" }), async (req, res) => {
-  await handleStripeWebhook(req, res);
-})
+app.post(
+  "/api/stripe",
+  express.raw({ type: "application/json" }),
+  async (req, res) => {
+    await handleStripeWebhook(req, res);
+  },
+);
 
-// Routes   
+// Routes
 app.use("/api/users", userRouter);
 app.use("/api/chats", chatRouter);
 app.use("/api/messages", messageRoute);
