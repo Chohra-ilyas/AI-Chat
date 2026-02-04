@@ -15,10 +15,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("API is running...");
-});
-
 // Database connection
 await connectDB(process.env.MONGODB_URI);
 
@@ -30,6 +26,10 @@ app.post(
     await handleStripeWebhook(req, res);
   },
 );
+
+app.get("/", (req, res) => {
+  res.send("API is running...");
+});
 
 // Routes
 app.use("/api/users", userRouter);
