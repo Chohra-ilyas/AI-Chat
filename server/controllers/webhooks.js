@@ -14,44 +14,42 @@ export const handleStripeWebhook = async (req, res) => {
       process.env.STRIPE_WEBHOOK_SECRET,
     );
   } catch (error) {
-    console.log(`⚠️  Webhook signature verification failed.`, error.message);
+    console.log("⚠️ Webhook signature verification failed:", error.message);
     return res.status(400).send(`Webhook Error: ${error.message}`);
   }
 
   try {
-    switch (event.type) {
-      case "payment_intent.succeeded": {
-        const paymentIntent = event.data.object;
-        const sessionList = await stripe.checkout.sessions.list({
-          payment_intent: paymentIntent.id,
-        });
-        const session = sessionList.data[0];
-        const { transactionId, appId } = session.metadata;
-        if (appId === "AI-Chat") {
-          const transaction = await Transaction.findOne({
-            _id: transactionId,
-            isPaid: false,
-          });
-          console.log(transaction)
-          if (transaction) {
-            transaction.isPaid = true;
-            await User.findByIdAndUpdate(transaction.userId, {
-              $inc: { credits: transaction.credits },
-            });
-            await transaction.save();
-          }
-        } else {
-          return res.json({ received: true, message: "App ID mismatch" });
-        }
-        break;
+    if (event.type === "checkout.session.completed") {
+      const session = event.data.object;
+
+      const { transactionId, appId } = session.metadata;
+
+      if (appId !== "AI-Chat") {
+        return res.json({ received: true, message: "App ID mismatch" });
       }
-      default:
-        console.log(`Unhandled event type ${event.type}`);
-        break;
+
+      const transaction = await Transaction.findOne({
+        _id: transactionId,
+        isPaid: false,
+      });
+
+      if (!transaction) {
+        return res.json({ received: true, message: "Transaction not found" });
+      }
+
+      transaction.isPaid = true;
+      await transaction.save();
+
+      await User.findByIdAndUpdate(transaction.userId, {
+        $inc: { credits: transaction.credits },
+      });
+
+      console.log("✅ Payment confirmed & credits added");
     }
+
     res.json({ received: true });
   } catch (error) {
-    console.error("Error processing webhook:", error);
+    console.error("Webhook processing error:", error);
     res.status(500).json({ message: error.message });
   }
 };
