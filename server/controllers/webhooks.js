@@ -24,7 +24,6 @@ export const handleStripeWebhook = async (req, res) => {
         const paymentIntent = event.data.object;
         const sessionList = await stripe.checkout.sessions.list({
           payment_intent: paymentIntent.id,
-          limit: 1,
         });
         const session = sessionList.data[0];
         const { transactionId, appId } = session.metadata;
