@@ -11,10 +11,6 @@ import { handleStripeWebhook } from "./controllers/webhooks.js";
 // Initialize Express app
 const app = express();
 
-// Middleware
-app.use(cors());
-app.use(express.json());
-
 // Database connection
 await connectDB(process.env.MONGODB_URI);
 
@@ -26,6 +22,10 @@ app.post(
     await handleStripeWebhook(req, res);
   },
 );
+
+// Middleware
+app.use(cors());
+app.use(express.json());
 
 app.get("/", (req, res) => {
   res.send("API is running...");
