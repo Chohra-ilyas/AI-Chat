@@ -2,22 +2,61 @@ import React, { use, useEffect, useRef, useState } from "react";
 import { useAppContext } from "../context/AppContext";
 import { assets } from "../assets/assets";
 import Message from "./Message";
+import toast from "react-hot-toast";
 
 const ChatBox = () => {
-
   const containerRef = useRef(null);
 
-  const { selectedChat, theme } = useAppContext();
+  const { selectedChat, theme, user, axios, token, setUser } = useAppContext();
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [inputType, setInputType] = useState("text");
   const [prompt, setPrompt] = useState("");
   const [isPublished, setIsPublished] = useState(false);
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-    if (prompt.trim() === "") return;
-    // Handle message submission logic here
+  const onSubmit = async (e) => {
+    try {
+      e.preventDefault();
+      if (prompt.trim() === "") return;
+      if (!user) return toast.error("Please login to send a message.");
+      setLoading(true);
+      const promptCopy = prompt;
+      setPrompt("");
+      setMessages((prev) => [
+        ...prev,
+        { role: "user", content: promptCopy, isImage: false },
+      ]);
+      const { data } = await axios.post(
+        `/api/messages/${inputType}`,
+        {
+          chatId: selectedChat._id,
+          prompt: promptCopy,
+          isPublished,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      if (data.success) {
+        setMessages((prev) => [...prev, data.message]);
+        if (inputType === "image") {
+          setUser((prev) => ({ ...prev, credits: prev.credits - 2 }));
+        } else {
+          setUser((prev) => ({ ...prev, credits: prev.credits - 1 }));
+        }
+        setLoading(false);
+      } else {
+        toast.error(
+          data.message || "Failed to send message. Please try again.",
+        );
+      }
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "An error occurred. Please try again.",
+      );
+    }
   };
 
   useEffect(() => {
@@ -31,7 +70,7 @@ const ChatBox = () => {
       containerRef.current.scrollTo({
         top: containerRef.current.scrollHeight,
         behavior: "smooth",
-      })
+      });
     }
   }, [messages]);
 
@@ -73,7 +112,7 @@ const ChatBox = () => {
         )}
       </div>
 
-      {inputType === 'image' && (
+      {inputType === "image" && (
         <label className="inline-flex items-center gap-2 mb-3 text-sm mx-auto">
           <p className="text-xs">Publish Generated Image to Community</p>
           <input
@@ -86,8 +125,11 @@ const ChatBox = () => {
       )}
 
       {/*Prompt Input Box */}
-      <form onSubmit={onSubmit} className="bg-praimary/20 dark:bg-[#583C79]/30 border border-praimary
-       dark:border-[#80609F]/30 rounded-full max-w-2xl p-3 pl-4 mx-auto flex items-center gap-3">
+      <form
+        onSubmit={onSubmit}
+        className="bg-praimary/20 dark:bg-[#583C79]/30 border border-praimary
+       dark:border-[#80609F]/30 rounded-full max-w-2xl p-3 pl-4 mx-auto flex items-center gap-3"
+      >
         <select
           onChange={(e) => setInputType(e.target.value)}
           className="text-sm pl-3 pr-2 outline-none"
@@ -106,7 +148,11 @@ const ChatBox = () => {
           onChange={(e) => setPrompt(e.target.value)}
           required
         />
-        <button disabled={loading} className="w-8 cursor-pointer">
+        <button
+          onClick={onSubmit}
+          disabled={loading}
+          className="w-8 cursor-pointer"
+        >
           <img src={loading ? assets.stop_icon : assets.send_icon} alt="" />
         </button>
       </form>
