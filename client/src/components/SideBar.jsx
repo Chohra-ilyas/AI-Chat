@@ -8,7 +8,7 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
   const [search, setSearch] = useState("");
   return (
     <div
-      className={`flex flex-col h-screen min-w-72 p-5 dark:bg-gradient-to-b from-[#242142]/30 to-[#000000]
+      className={`flex flex-col h-screen min-w-77 p-5 dark:bg-gradient-to-b from-[#242142]/30 to-[#000000]
     border-r border-[#80609F]/30 backdrop-blur-3xl transition-all duration-500 max-md:absolute left-0 z-1
     ${!isMenuOpen && "max-md:-translate-x-full"} md:translate-x-0`}
     >
