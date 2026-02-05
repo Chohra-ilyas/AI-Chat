@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAppContext } from "../context/AppContext";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const [state, setState] = useState("login");
@@ -24,7 +25,7 @@ const Login = () => {
         toast.error(data.message || "Authentication failed. Please try again.");
       }
     } catch (error) {
-      toast.error(error.message || "An error occurred. Please try again.");
+      toast.error(error.response?.data?.message || "An error occurred. Please try again.");
     }
   };
 

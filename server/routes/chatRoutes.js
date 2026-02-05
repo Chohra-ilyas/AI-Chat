@@ -12,6 +12,6 @@ const chatRouter = express.Router();
 chatRouter.use(authenticateUser);
 chatRouter.get("/", getUserChats);
 chatRouter.post("/", createChat);
-chatRouter.delete("/", deleteChat);
+chatRouter.post("/delete", deleteChat);
 
 export default chatRouter;
