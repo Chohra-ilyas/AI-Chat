@@ -1,14 +1,58 @@
 import { useEffect, useState } from "react";
 import Loading from "./Loading";
 import { dummyPlans } from "../assets/assets";
+import { useAppContext } from "../context/AppContext";
+import toast from "react-hot-toast";
 
 const Credits = () => {
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { token, axios } = useAppContext();
 
   const fetchPlans = async () => {
-    setPlans(dummyPlans);
-    setLoading(false);
+    try {
+      const { data } = await axios.get("/api/credits/plans", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (data.success) {
+        setPlans(data.plans);
+      } else {
+        toast.error(data.message || "Failed to fetch plans. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error fetching plans:", error);
+      toast.error("An error occurred while fetching plans. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const purchasePlan = async (planId) => {
+    try {
+      const { data } = await axios.post(
+        "/api/credits/purchase",
+        { planId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      if (data.success) {
+        window.location.href = data.url;
+      } else {
+        toast.error(
+          data.message || "Failed to purchase plan. Please try again.",
+        );
+      }
+    } catch (error) {
+      console.error("Error purchasing plan:", error);
+      toast.error(
+        "An error occurred while purchasing the plan. Please try again.",
+      );
+    }
   };
 
   useEffect(() => {
@@ -56,6 +100,13 @@ const Credits = () => {
               </ul>
             </div>
             <button
+              onClick={() =>
+                toast.promise(purchasePlan(plan._id), {
+                  loading: "Processing your purchase...",
+                  success: "Redirecting to payment gateway!",
+                  error: "Failed to process purchase. Please try again.",
+                })
+              }
               className={`w-full py-3 px-4 rounded-md font-semibold cursor-pointer
               ${plan._id === "pro" ? "bg-white text-purple-600 hover:bg-purple-100" : "bg-purple-600 text-white hover:bg-purple-700"}`}
             >
