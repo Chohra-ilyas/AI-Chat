@@ -20,10 +20,13 @@
     "express": "^5.2.1",
     "imagekit": "^6.0.0",
     "jsonwebtoken": "^9.0.3",
+    "mongodb": "^7.1.0",
     "mongoose": "^9.1.5",
     "openai": "^6.17.0",
     "stripe": "^20.3.0",
-    "svix": "^1.84.1"
+    "svix": "^1.84.1",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.11"

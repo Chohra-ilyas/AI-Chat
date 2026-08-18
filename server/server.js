@@ -1,12 +1,16 @@
 import express from "express";
 import cors from "cors";
-import connectDB from "./config/db.js";
 import "dotenv/config";
+import connectDB from "./config/db.js";
+
 import userRouter from "./routes/userRoutes.js";
 import chatRouter from "./routes/chatRoutes.js";
 import messageRoute from "./routes/messageRoutes.js";
 import creditRouter from "./routes/creditRoutes.js";
 import { handleStripeWebhook } from "./controllers/webhooks.js";
+
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./config/swagger.js";
 
 // Initialize Express app
 const app = express();
@@ -14,7 +18,7 @@ const app = express();
 // Database connection
 await connectDB(process.env.MONGODB_URI);
 
-// Stripe webhook endpoint
+// Stripe webhook (must be before express.json())
 app.post(
   "/api/stripe",
   express.raw({ type: "application/json" }),
@@ -25,6 +29,10 @@ app.post(
 app.use(cors());
 app.use(express.json());
 
+// Swagger
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// Base route
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
