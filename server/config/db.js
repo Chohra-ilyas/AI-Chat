@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import dns from "node:dns";
 
-// Fix querySrv ECONNREFUSED error on Windows/routers that fail Node c-ares DNS SRV resolution
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
 const connectDB = async (mongoURI) => {
